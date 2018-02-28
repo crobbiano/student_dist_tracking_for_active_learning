@@ -82,99 +82,105 @@ x1=linspace(mu1-4*s1,mu1+4*s1,200);
 pdfx1=1/sqrt(2*pi)/s1*exp(-(x1-mu1).^2/(2*s1^2));
 pd1 = makedist('Normal', mu1, s1);
 pdfx11 = pdf(pd1, x1);
-plot(x1,pdfx11, 'k--*');
+p1 = plot(x1,pdfx11, 'k--*');
 
 mu2=mean(lower_performers(:   , end-1));
 s2=std(lower_performers(:   , end-1));
 x2=linspace(mu2-4*s2,mu2+4*s2,200);
 pdfx2=2/sqrt(2*pi)/s2*exp(-(x2-mu2).^2/(2*s2^2));
 pdfx22 = pdf('Normal', x2, mu2, s2);
-plot(x2,pdfx22, 'b--');
+p2 = plot(x2,pdfx22, 'b--');
 
 mu3=mean(low_performers(:   , end-1));
 s3=std(low_performers(:   , end-1));
 x3=linspace(mu3-4*s3,mu3+4*s3,200);
 pdfx3=3/sqrt(2*pi)/s3*exp(-(x3-mu3).^2/(2*s3^2));
 pdfx33 = pdf('Normal', x3, mu3, s3);
-plot(x3,pdfx33, 'r--');
+p3 = plot(x3,pdfx33, 'r--');
 
 mu4=mean(average_performers(:   , end-1));
 s4=std(average_performers(:   , end-1));
 x4=linspace(mu4-4*s4,mu4+4*s4,200);
 pdfx4=4/sqrt(2*pi)/s4*exp(-(x4-mu4).^2/(2*s4^2));
 pdfx44 = pdf('Normal', x4, mu4, s4);
-plot(x4,pdfx44, 'g--');
+p4 = plot(x4,pdfx44, 'g--');
 
 mu5=mean(high_performers(:   , end-1));
 s5=std(high_performers(:   , end-1));
 x5=linspace(mu5-4*s5,mu5+4*s5,200);
 pdfx5=5/sqrt(2*pi)/s5*exp(-(x5-mu5).^2/(2*s5^2));
 pdfx55 = pdf('Normal', x5, mu5, s5);
-plot(x5,pdfx55, 'm--');
+p5 = plot(x5,pdfx55, 'm--');
 
 mu6=mean(higher_performers(:   , end-1));
 s6=std(higher_performers(:   , end-1));
 x6=linspace(mu6-4*s6,mu6+4*s6,200);
 pdfx6=6/sqrt(2*pi)/s6*exp(-(x6-mu6).^2/(2*s6^2));
 pdfx66 = pdf('Normal', x6, mu6, s6);
-plot(x6,pdfx66, 'c--');
+p6 = plot(x6,pdfx66, 'c--');
 
-% mu7=mean(highest_performers(:   , end-1));
-% s7=std(highest_performers(:   , end-1));
-% x7=linspace(mu7-4*s7,mu7+4*s7,200);
-% pdfx7=7/sqrt(2*pi)/s7*exp(-(x7-mu7).^2/(2*s7^2));
-% plot(x7,pdfx7, 'k--');
+mu7=mean(nonJuniorGpas);
+s7=std(nonJuniorGpas);
+x7=linspace(mu7-4*s7,mu7+4*s7,200);
+pdfx7=7/sqrt(2*pi)/s7*exp(-(x7-mu7).^2/(2*s7^2));
+pdfx77 = pdf('Normal', x7, mu7, s7);
+p7 = plot(x7,pdfx77, 'k--');
 
 mu8=mean(lowest_performers(:   , end));
 s8=std(lowest_performers(:   , end));
 x8=linspace(mu8-4*s8,mu8+4*s8,200);
 pdfx8=8/sqrt(2*pi)/s8*exp(-(x8-mu8).^2/(2*s8^2));
 pdfx88 = pdf('Normal', x8, mu8, s8);
-plot(x8,pdfx88, 'k');
+p8 = plot(x8,pdfx88, 'k');
 
 mu9=mean(lower_performers(:   , end));
 s9=std(lower_performers(:   , end));
 x9=linspace(mu9-4*s9,mu9+4*s9,200);
 pdfx9=9/sqrt(2*pi)/s9*exp(-(x9-mu9).^2/(2*s9^2));
 pdfx99 = pdf('Normal', x9, mu9, s9);
-plot(x9,pdfx99, 'b');
+p9 = plot(x9,pdfx99, 'b');
 
 mu10=mean(low_performers(:   , end));
 s10=std(low_performers(:   , end));
 x10=linspace(mu10-4*s10,mu10+4*s10,200);
 pdfx10=10/sqrt(2*pi)/s10*exp(-(x10-mu10).^2/(2*s10^2));
 pdfx1010 = pdf('Normal', x10, mu10, s10);
-plot(x10,pdfx1010, 'r');
+p10 = plot(x10,pdfx1010, 'r');
 
 mu11=mean(average_performers(:   , end));
 s11=std(average_performers(:   , end));
 x11=linspace(mu11-4*s11,mu11+4*s11,200);
 pdfx11=11/sqrt(2*pi)/s11*exp(-(x11-mu11).^2/(2*s11^2));
 pdfx1111 = pdf('Normal', x11, mu11, s11);
-plot(x11,pdfx1111, 'g');
+p11 = plot(x11,pdfx1111, 'g');
 
 mu12=mean(high_performers(:   , end));
 s12=std(high_performers(:   , end));
 x12=linspace(mu12-4*s12,mu12+4*s12,200);
 pdfx12=12/sqrt(2*pi)/s12*exp(-(x12-mu12).^2/(2*s12^2));
 pdfx1212 = pdf('Normal', x12, mu12, s12);
-plot(x12,pdfx1212, 'm');
+p12 = plot(x12,pdfx1212, 'm');
 
 mu13=mean(higher_performers(:   , end));
 s13=std(higher_performers(:   , end));
 x13=linspace(mu13-4*s13,mu13+4*s13,200);
 pdfx13=13/sqrt(2*pi)/s13*exp(-(x13-mu13).^2/(2*s13^2));
 pdfx1313 = pdf('Normal', x13, mu13, s13);
-plot(x13,pdfx1313, 'c');
+p13 = plot(x13,pdfx1313, 'c');
 
-% mu14=mean(highest_performers(:   , end));
-% s14=std(highest_performers(:   , end));
-% x14=linspace(mu14-4*s14,mu14+4*s14,200);
-% pdfx14=14/sqrt(2*pi)/s14*exp(-(x14-mu14).^2/(2*s14^2));
-% plot(x14,pdfx14, 'k--');
-legend(['Lowest N=' num2str(sum(lowest_performers_mask))],['Lower N=' num2str(sum(lower_performers_mask))],['Low N=' num2str(sum(low_performers_mask))],...
-    ['Average N=' num2str(sum(average_performers_mask))],['High N=' num2str(sum(high_performers_mask))],['Higher N=' num2str(sum(higher_performers_mask))])
+mu14=mean(JuniorGpas);
+s14=std(JuniorGpas);
+x14=linspace(mu14-4*s14,mu14+4*s14,200);
+pdfx14=14/sqrt(2*pi)/s14*exp(-(x14-mu14).^2/(2*s14^2));
+pdfx1414 = pdf('Normal', x14, mu14, s14);
+p14 = plot(x14,pdfx1414, 'k');
+
+legend([p2, p3, p4, p5, p6, p7],['Lower N=' num2str(sum(lower_performers_mask))],['Low N=' num2str(sum(low_performers_mask))],...
+    ['Average N=' num2str(sum(average_performers_mask))],['High N=' num2str(sum(high_performers_mask))],...
+    ['Higher N=' num2str(sum(higher_performers_mask))], 'Overall' )
+
 xlim([1.5 4.5])
+ylim([0 3.3])
 grid minor
 title('PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
 %% Old plotting things
