@@ -34,11 +34,12 @@ gradesGpas     = mean(Grades,2);
 [m,n]          = size(Grades);
 
 %% First do the pre-KI then do post-KI
+% column 6 is pre/post ki indicator. 1==post
 preKI_Grades = Grades(data.data(:,6)<1,:);
 preKI_Gpas = Gpas(data.data(:,6)<1);
 
 % FIXME - don't use nanmean
-JuniorGrades = preKI_Grades(:,5:end-numMathClasses);
+JuniorGrades = preKI_Grades(:,end-numMathClasses-6:end-numMathClasses);
 JuniorGpas   = nanmean(JuniorGrades,2);
 [mj,nj]         = size(JuniorGrades);
 pdj = fitdist(JuniorGpas,'Normal');
@@ -58,7 +59,7 @@ higher_performance_range = pd.mu + (.5*pd.std + 1*pd.std);
 highest_performance_range = pd.mu + (.5*pd.std + 2*pd.std);
 
 % lowester_performers_mask = (nonJuniorGpas < lowest_performance_range);
-lowest_performers_mask = (nonJuniorGpas >= lowest_performance_range).*(nonJuniorGpas < lower_performance_range);
+lowest_performers_mask = (nonJuniorGpas < lower_performance_range);
 lower_performers_mask = (nonJuniorGpas >= lower_performance_range).*(nonJuniorGpas < low_performance_range);
 low_performers_mask = (nonJuniorGpas >= low_performance_range).*(nonJuniorGpas < average_performance_range);
 average_performers_mask = (nonJuniorGpas >= average_performance_range).*(nonJuniorGpas < high_performance_range);
@@ -190,14 +191,54 @@ xlim([1.5 4.5])
 ylim([0 3.3])
 grid minor
 title('PRE-KI: PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
+%% New plotting things
+% generate random data set between 1 and 20
 
+figure(4); clf; 
+subplot(2,1,1)
+hold on
+h11 = histogram(lowest_performers(:, end-1), sum(lowest_performers_mask),'BinWidth', .05);
+h12 = histogram(lower_performers(:, end-1), sum(lower_performers_mask),'BinWidth', .05);
+h13 = histogram(low_performers(:, end-1), sum(low_performers_mask),'BinWidth', .05);
+h14 = histogram(average_performers(:, end-1), sum(average_performers_mask),'BinWidth', .05);
+h15 = histogram(high_performers(:, end-1), sum(high_performers_mask),'BinWidth', .05);
+h16 = histogram(higher_performers(:, end-1), sum(higher_performers_mask),'BinWidth', .05);
+xlim([0 4])
+subplot(2,1,2)
+hold on
+h21 = histogram(lowest_performers(:, end), sum(lowest_performers_mask),'BinWidth', .05);
+h22 = histogram(lower_performers(:, end), sum(lower_performers_mask),'BinWidth', .05);
+h23 = histogram(low_performers(:, end), sum(low_performers_mask),'BinWidth', .05);
+h24 = histogram(average_performers(:, end), sum(average_performers_mask),'BinWidth', .05);
+h25 = histogram(high_performers(:, end), sum(high_performers_mask),'BinWidth', .05);
+h26 = histogram(higher_performers(:, end), sum(higher_performers_mask),'BinWidth', .05);
+xlim([0 4])
+js11 = jsdiv(h11.Data, h21.Data);
+js12 = jsdiv(h12.Data, h22.Data);
+js13 = jsdiv(h13.Data, h23.Data);
+js14 = jsdiv(h14.Data, h24.Data);
+js15 = jsdiv(h15.Data, h25.Data);
+js16 = jsdiv(h16.Data, h26.Data);
+
+display(['JS Divs: ' num2str(js11) ', ' ...
+    num2str(js12) ', ' ...
+    num2str(js13) ', ' ...
+    num2str(js14) ', ' ...
+    num2str(js15) ', ' ...
+    num2str(js16) ', ' ])
+% figure
+% b = bar(data);
+% b.FaceColor = 'flat';
+% b.CData(specificColumn,:) = [1 0 0];
+% set(gca, 'xTick', x)
+% return 
 %%
 %% First do the pre-KI then do post-KI
 postKI_Grades = Grades(data.data(:,6)>0,:);
 postKI_Gpas = Gpas(data.data(:,6)>0);
 
 % FIXME - don't use nanmean
-JuniorGrades = postKI_Grades(:,5:end-numMathClasses);
+JuniorGrades = postKI_Grades(:,end-numMathClasses-6:end-numMathClasses);
 JuniorGpas   = nanmean(JuniorGrades,2);
 [mj,nj]         = size(JuniorGrades);
 pdj = fitdist(JuniorGpas,'Normal');
@@ -217,7 +258,7 @@ higher_performance_range = pd.mu + (.5*pd.std + 1*pd.std);
 highest_performance_range = pd.mu + (.5*pd.std + 2*pd.std);
 
 % lowester_performers_mask = (nonJuniorGpas < lowest_performance_range);
-lowest_performers_mask = (nonJuniorGpas >= lowest_performance_range).*(nonJuniorGpas < lower_performance_range);
+lowest_performers_mask = (nonJuniorGpas < lower_performance_range);
 lower_performers_mask = (nonJuniorGpas >= lower_performance_range).*(nonJuniorGpas < low_performance_range);
 low_performers_mask = (nonJuniorGpas >= low_performance_range).*(nonJuniorGpas < average_performance_range);
 average_performers_mask = (nonJuniorGpas >= average_performance_range).*(nonJuniorGpas < high_performance_range);
@@ -350,6 +391,40 @@ xlim([1.5 4.5])
 ylim([0 3.3])
 grid minor
 title('POST-KI: PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
+%% New plotting things
+% generate random data set between 1 and 20
+
+figure(6); clf;
+subplot(2,1,1)
+hold on
+h31 = histogram(lowest_performers(:, end-1), sum(lowest_performers_mask),'BinWidth', .05);
+h32 = histogram(lower_performers(:, end-1), sum(lower_performers_mask),'BinWidth', .05);
+h33 = histogram(low_performers(:, end-1), sum(low_performers_mask),'BinWidth', .05);
+h34 = histogram(average_performers(:, end-1), sum(average_performers_mask),'BinWidth', .05);
+h35 = histogram(high_performers(:, end-1), sum(high_performers_mask),'BinWidth', .05);
+h36 = histogram(higher_performers(:, end-1), sum(higher_performers_mask),'BinWidth', .05);
+xlim([0 4])
+subplot(2,1,2)
+hold on;
+h41 = histogram(lowest_performers(:, end), sum(lowest_performers_mask),'BinWidth', .05);
+h42 = histogram(lower_performers(:, end), sum(lower_performers_mask),'BinWidth', .05);
+h43 = histogram(low_performers(:, end), sum(low_performers_mask),'BinWidth', .05);
+h44 = histogram(average_performers(:, end), sum(average_performers_mask),'BinWidth', .05);
+h45 = histogram(high_performers(:, end), sum(high_performers_mask),'BinWidth', .05);
+h46 = histogram(higher_performers(:, end), sum(higher_performers_mask),'BinWidth', .05);
+xlim([0 4])
+js21 = jsdiv(h31.Data, h41.Data);
+js22 = jsdiv(h32.Data, h42.Data);
+js23 = jsdiv(h33.Data, h43.Data);
+js24 = jsdiv(h34.Data, h44.Data);
+js25 = jsdiv(h35.Data, h45.Data);
+js26 = jsdiv(h36.Data, h46.Data);
+display(['JS Divs: ' num2str(js21) ', ' ...
+    num2str(js22) ', ' ...
+    num2str(js23) ', ' ...
+    num2str(js24) ', ' ...
+    num2str(js25) ', ' ...
+    num2str(js26) ', ' ])
 %% Old plotting things
 % h1  = histfit(lower_performers(:   , end-1) , 5);
 % h2  = histfit(low_performers(:     , end-1) , 5);
