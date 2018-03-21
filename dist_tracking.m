@@ -82,7 +82,9 @@ average_performers = [Grades(average_performers_mask>0 , :) , nonJuniorGpas(aver
 high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high_performers_mask>0)    , JuniorGpas(high_performers_mask>0)    ] ;
 higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , JuniorGpas(higher_performers_mask>0)  ] ;
 %% Plot the individual group distributions
-figure(2); clf; hold on
+figure(2); clf; 
+
+subplot(4, 2, [1 3]); hold on
 
 mu1=mean(lowest_performers(:   , end-1));
 s1=std(lowest_performers(:   , end-1));
@@ -187,32 +189,43 @@ legend([p2, p3, p4, p5, p6, p7],['Lower N=' num2str(sum(lower_performers_mask))]
     ['Average N=' num2str(sum(average_performers_mask))],['High N=' num2str(sum(high_performers_mask))],...
     ['Higher N=' num2str(sum(higher_performers_mask))], 'Overall' )
 
-xlim([1.5 4.5])
+xlim([1 4.5])
 ylim([0 3.3])
 grid minor
 title('PRE-KI: PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
 %% New plotting things
 % generate random data set between 1 and 20
 
-figure(4); clf; 
-subplot(2,1,1)
+%figure(4); clf; 
+%subplot(2,1,1)
+subplot(4, 2, [5]); hold on
 hold on
-h11 = histogram(lowest_performers(:, end-1), sum(lowest_performers_mask),'BinWidth', .05);
-h12 = histogram(lower_performers(:, end-1), sum(lower_performers_mask),'BinWidth', .05);
-h13 = histogram(low_performers(:, end-1), sum(low_performers_mask),'BinWidth', .05);
-h14 = histogram(average_performers(:, end-1), sum(average_performers_mask),'BinWidth', .05);
-h15 = histogram(high_performers(:, end-1), sum(high_performers_mask),'BinWidth', .05);
-h16 = histogram(higher_performers(:, end-1), sum(higher_performers_mask),'BinWidth', .05);
-xlim([0 4])
-subplot(2,1,2)
-hold on
-h21 = histogram(lowest_performers(:, end), sum(lowest_performers_mask),'BinWidth', .05);
-h22 = histogram(lower_performers(:, end), sum(lower_performers_mask),'BinWidth', .05);
-h23 = histogram(low_performers(:, end), sum(low_performers_mask),'BinWidth', .05);
-h24 = histogram(average_performers(:, end), sum(average_performers_mask),'BinWidth', .05);
-h25 = histogram(high_performers(:, end), sum(high_performers_mask),'BinWidth', .05);
-h26 = histogram(higher_performers(:, end), sum(higher_performers_mask),'BinWidth', .05);
-xlim([0 4])
+h11 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+h12 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+h13 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+h14 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+h15 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+h16 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+xlim([1 4.5])
+ylims = ylim
+%ylim([0 60])
+grid minor
+title('PRE-KI end of sophomore year')
+
+%subplot(2,1,2)
+%hold on
+subplot(4, 2, [7]); hold on
+h21 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+h22 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+h23 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+h24 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+h25 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+h26 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+xlim([1 4.5])
+ylim(ylims)
+grid minor
+title('PRE-KI end of junior year')
+
 js11 = jsdiv(h11.Data, h21.Data);
 js12 = jsdiv(h12.Data, h22.Data);
 js13 = jsdiv(h13.Data, h23.Data);
@@ -282,7 +295,8 @@ high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high
 higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , JuniorGpas(higher_performers_mask>0)  ] ;
 
 %% Plot the individual group distributions
-figure(3); clf; hold on
+%figure(3); clf; hold on
+subplot(4, 2, [2 4]); hold on
 
 mu1=mean(lowest_performers(:   , end-1));
 s1=std(lowest_performers(:   , end-1));
@@ -387,32 +401,42 @@ legend([p2, p3, p4, p5, p6, p7],['Lower N=' num2str(sum(lower_performers_mask))]
     ['Average N=' num2str(sum(average_performers_mask))],['High N=' num2str(sum(high_performers_mask))],...
     ['Higher N=' num2str(sum(higher_performers_mask))], 'Overall' )
 
-xlim([1.5 4.5])
+xlim([1 4.5])
 ylim([0 3.3])
 grid minor
 title('POST-KI: PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
 %% New plotting things
 % generate random data set between 1 and 20
 
-figure(6); clf;
-subplot(2,1,1)
+%figure(6); clf;
+%subplot(2,1,1)
+subplot(4, 2, [6]); hold on
 hold on
-h31 = histogram(lowest_performers(:, end-1), sum(lowest_performers_mask),'BinWidth', .05);
-h32 = histogram(lower_performers(:, end-1), sum(lower_performers_mask),'BinWidth', .05);
-h33 = histogram(low_performers(:, end-1), sum(low_performers_mask),'BinWidth', .05);
-h34 = histogram(average_performers(:, end-1), sum(average_performers_mask),'BinWidth', .05);
-h35 = histogram(high_performers(:, end-1), sum(high_performers_mask),'BinWidth', .05);
-h36 = histogram(higher_performers(:, end-1), sum(higher_performers_mask),'BinWidth', .05);
-xlim([0 4])
-subplot(2,1,2)
-hold on;
-h41 = histogram(lowest_performers(:, end), sum(lowest_performers_mask),'BinWidth', .05);
-h42 = histogram(lower_performers(:, end), sum(lower_performers_mask),'BinWidth', .05);
-h43 = histogram(low_performers(:, end), sum(low_performers_mask),'BinWidth', .05);
-h44 = histogram(average_performers(:, end), sum(average_performers_mask),'BinWidth', .05);
-h45 = histogram(high_performers(:, end), sum(high_performers_mask),'BinWidth', .05);
-h46 = histogram(higher_performers(:, end), sum(higher_performers_mask),'BinWidth', .05);
-xlim([0 4])
+h31 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+h32 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+h33 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+h34 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+h35 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+h36 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+xlim([1 4.5])
+ylims = ylim
+grid minor
+title('POST-KI end of sophomore year')
+
+%subplot(2,1,2)
+%hold on;
+subplot(4, 2, [8]); hold on
+h41 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+h42 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+h43 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+h44 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+h45 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+h46 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+xlim([1 4.5])
+ylim(ylims)
+grid minor
+title('POST-KI end of junior year')
+
 js21 = jsdiv(h31.Data, h41.Data);
 js22 = jsdiv(h32.Data, h42.Data);
 js23 = jsdiv(h33.Data, h43.Data);
