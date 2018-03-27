@@ -49,7 +49,16 @@ function d=jeffrey_divergence(XI,XJ)
     for j=1:p
       m=(XJ(i,j) + XI(1,j)) / 2;
 			if m ~= 0  % if m == 0, then xi == xj == 0
-				d(i,1) = d(i,1) + (XI(1,j) * log(XI(1,j) / m)) + (XJ(i,j) * log(XJ(i,j) / m));
+                % Need to handle log(0)*0 == 0 instead of NaN
+                if (XI(1,j) == 0 && XJ(i,j) == 0)
+                    d(i,1) = d(i,1) ;
+                elseif (XI(1,j) == 0)
+                    d(i,1) = d(i,1) + (XJ(i,j) * log(XJ(i,j) / m));
+                elseif (XJ(i,j) == 0)
+                    d(i,1) = d(i,1) + (XI(1,j) * log(XI(1,j) / m));
+                else
+                    d(i,1) = d(i,1) + (XI(1,j) * log(XI(1,j) / m)) + (XJ(i,j) * log(XJ(i,j) / m));
+                end
 			end
     end
   end

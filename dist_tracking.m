@@ -201,13 +201,19 @@ title('PRE-KI: PDFs of group performances, dashed is prior to 3rd year, solid is
 subplot(4, 2, [5]); hold on
 hold on
 h11 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+[h11n, h11edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 h12 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+[h12n, h12edges] = histcounts(lower_performers(:  , end-1) , 'BinWidth' , .1);
 h13 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+[h13n, h13edges] = histcounts(low_performers(:  , end-1) , 'BinWidth' , .1);
 h14 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+[h14n, h14edges] = histcounts(average_performers(:  , end-1) , 'BinWidth' , .1);
 h15 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+[h15n, h15edges] = histcounts(high_performers(:  , end-1) , 'BinWidth' , .1);
 h16 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+[h16n, h16edges] = histcounts(higher_performers(:  , end-1) , 'BinWidth' , .1);
 xlim([1 4.5])
-ylims = ylim
+ylims = ylim;
 %ylim([0 60])
 grid minor
 title('PRE-KI end of sophomore year')
@@ -216,22 +222,37 @@ title('PRE-KI end of sophomore year')
 %hold on
 subplot(4, 2, [7]); hold on
 h21 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+[h21n, h21edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
 h22 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+[h22n, h22edges] = histcounts(lower_performers(:  , end) , 'BinWidth' , .1);
 h23 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+[h23n, h23edges] = histcounts(low_performers(:  , end) , 'BinWidth' , .1);
 h24 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+[h24n, h24edges] = histcounts(average_performers(:  , end) , 'BinWidth' , .1);
 h25 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+[h25n, h25edges] = histcounts(high_performers(:  , end) , 'BinWidth' , .1);
 h26 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+[h26n, h26edges] = histcounts(higher_performers(:  , end) , 'BinWidth' , .1);
 xlim([1 4.5])
-ylim(ylims)
+ylim([ylims])
 grid minor
 title('PRE-KI end of junior year')
 
-js11 = jsdiv(h11.Data, h21.Data);
-js12 = jsdiv(h12.Data, h22.Data);
-js13 = jsdiv(h13.Data, h23.Data);
-js14 = jsdiv(h14.Data, h24.Data);
-js15 = jsdiv(h15.Data, h25.Data);
-js16 = jsdiv(h16.Data, h26.Data);
+[nh11, nh21, nbins] = makeSimilarDists(h11n, h11edges, h21n, h21edges, .1);
+[nh12, nh22, nbins] = makeSimilarDists(h12n, h12edges, h22n, h22edges, .1);
+[nh13, nh23, nbins] = makeSimilarDists(h13n, h13edges, h23n, h23edges, .1);
+[nh14, nh24, nbins] = makeSimilarDists(h14n, h14edges, h24n, h24edges, .1);
+[nh15, nh25, nbins] = makeSimilarDists(h15n, h15edges, h25n, h25edges, .1);
+[nh16, nh26, nbins] = makeSimilarDists(h16n, h16edges, h26n, h26edges, .1);
+% FIXME - some sort of error above here in nh16
+
+
+js11 = jensen_shannon_divergence(nh11/sum(nh11), nh21/sum(nh21));
+js12 = jensen_shannon_divergence(nh12/sum(nh12), nh22/sum(nh22));
+js13 = jensen_shannon_divergence(nh13/sum(nh13), nh23/sum(nh23));
+js14 = jensen_shannon_divergence(nh14/sum(nh14), nh24/sum(nh24));
+js15 = jensen_shannon_divergence(nh15/sum(nh15), nh25/sum(nh25));
+js16 = jensen_shannon_divergence(nh16/sum(nh16), nh26/sum(nh26));
 
 display(['JS Divs: ' num2str(js11) ', ' ...
     num2str(js12) ', ' ...
@@ -413,13 +434,19 @@ title('POST-KI: PDFs of group performances, dashed is prior to 3rd year, solid i
 subplot(4, 2, [6]); hold on
 hold on
 h31 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+[h31n, h31edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 h32 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+[h32n, h32edges] = histcounts(lower_performers(:  , end-1) , 'BinWidth' , .1);
 h33 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+[h33n, h33edges] = histcounts(low_performers(:  , end-1) , 'BinWidth' , .1);
 h34 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+[h34n, h34edges] = histcounts(average_performers(:  , end-1) , 'BinWidth' , .1);
 h35 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+[h35n, h35edges] = histcounts(high_performers(:  , end-1) , 'BinWidth' , .1);
 h36 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+[h36n, h36edges] = histcounts(higher_performers(:  , end-1) , 'BinWidth' , .1);
 xlim([1 4.5])
-ylims = ylim
+ylims = ylim;
 grid minor
 title('POST-KI end of sophomore year')
 
@@ -427,23 +454,36 @@ title('POST-KI end of sophomore year')
 %hold on;
 subplot(4, 2, [8]); hold on
 h41 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+[h41n, h41edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
 h42 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+[h42n, h42edges] = histcounts(lower_performers(:  , end) , 'BinWidth' , .1);
 h43 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+[h43n, h43edges] = histcounts(low_performers(:  , end) , 'BinWidth' , .1);
 h44 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+[h44n, h44edges] = histcounts(average_performers(:  , end) , 'BinWidth' , .1);
 h45 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+[h45n, h45edges] = histcounts(high_performers(:  , end) , 'BinWidth' , .1);
 h46 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+[h46n, h46edges] = histcounts(higher_performers(:  , end) , 'BinWidth' , .1);
 xlim([1 4.5])
-ylim(ylims)
+ylim([ylims])
 grid minor
 title('POST-KI end of junior year')
 
-js21 = jsdiv(h31.Data, h41.Data);
-js22 = jsdiv(h32.Data, h42.Data);
-js23 = jsdiv(h33.Data, h43.Data);
-js24 = jsdiv(h34.Data, h44.Data);
-js25 = jsdiv(h35.Data, h45.Data);
-js26 = jsdiv(h36.Data, h46.Data);
-display(['JS Divs: ' num2str(js21) ', ' ...
+[nh31, nh41, nbins] = makeSimilarDists(h31n, h31edges, h41n, h41edges, .1);
+[nh32, nh42, nbins] = makeSimilarDists(h32n, h32edges, h42n, h42edges, .1);
+[nh33, nh43, nbins] = makeSimilarDists(h33n, h33edges, h43n, h43edges, .1);
+[nh34, nh44, nbins] = makeSimilarDists(h34n, h34edges, h44n, h44edges, .1);
+[nh35, nh45, nbins] = makeSimilarDists(h35n, h35edges, h45n, h45edges, .1);
+[nh36, nh46, nbins] = makeSimilarDists(h36n, h36edges, h46n, h46edges, .1);
+
+js21 = jsdiv(nh31/sum(nh31), nh41/sum(nh41));
+js22 = jsdiv(nh32/sum(nh32), nh42/sum(nh42));
+js23 = jsdiv(nh33/sum(nh33), nh43/sum(nh43));
+js24 = jsdiv(nh34/sum(nh34), nh44/sum(nh44));
+js25 = jsdiv(nh35/sum(nh35), nh45/sum(nh45));
+js26 = jsdiv(nh36/sum(nh36), nh46/sum(nh46));
+display(['Post KI JS Divs: ' num2str(js21) ', ' ...
     num2str(js22) ', ' ...
     num2str(js23) ', ' ...
     num2str(js24) ', ' ...
