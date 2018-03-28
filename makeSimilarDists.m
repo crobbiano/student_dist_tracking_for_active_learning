@@ -11,14 +11,14 @@ function [ newdist1, newdist2, bins ] = makeSimilarDists( dist1, bins1, dist2, b
     bins = binmin:binwidth:binmax;
     
     newdist1 = zeros(1, numel(bins));
-    for i=1:numel(dist1)
-        [val, idx] = find(bins == bins1(i));
+    for i=1:numel(dist1)  
+        [val, idx] = find(abs(bins - bins1(i)) < 10^-3);
         newdist1(idx) = dist1(i);
     end
     
     newdist2 = zeros(1, numel(bins));
     for i=1:numel(dist2)
-        [val, idx] = find(bins == bins2(i));
+        [val, idx] = find(abs(bins - bins2(i)) < 10^-3);
         newdist2(idx) = dist2(i);
     end
 end

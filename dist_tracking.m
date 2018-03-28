@@ -12,7 +12,7 @@
 
 clear all
 clc
-% addpath('..\..\')
+addpath('histogram_distance')
 %% Set Up
 load('..\correlational_studies_data\data\grades.mat')
 
@@ -238,35 +238,12 @@ ylim([ylims])
 grid minor
 title('PRE-KI end of junior year')
 
-[nh11, nh21, nbins] = makeSimilarDists(h11n, h11edges, h21n, h21edges, .1);
-[nh12, nh22, nbins] = makeSimilarDists(h12n, h12edges, h22n, h22edges, .1);
-[nh13, nh23, nbins] = makeSimilarDists(h13n, h13edges, h23n, h23edges, .1);
-[nh14, nh24, nbins] = makeSimilarDists(h14n, h14edges, h24n, h24edges, .1);
-[nh15, nh25, nbins] = makeSimilarDists(h15n, h15edges, h25n, h25edges, .1);
-[nh16, nh26, nbins] = makeSimilarDists(h16n, h16edges, h26n, h26edges, .1);
-% FIXME - some sort of error above here in nh16
-
-
-js11 = jensen_shannon_divergence(nh11/sum(nh11), nh21/sum(nh21));
-js12 = jensen_shannon_divergence(nh12/sum(nh12), nh22/sum(nh22));
-js13 = jensen_shannon_divergence(nh13/sum(nh13), nh23/sum(nh23));
-js14 = jensen_shannon_divergence(nh14/sum(nh14), nh24/sum(nh24));
-js15 = jensen_shannon_divergence(nh15/sum(nh15), nh25/sum(nh25));
-js16 = jensen_shannon_divergence(nh16/sum(nh16), nh26/sum(nh26));
-
-display(['JS Divs: ' num2str(js11) ', ' ...
-    num2str(js12) ', ' ...
-    num2str(js13) ', ' ...
-    num2str(js14) ', ' ...
-    num2str(js15) ', ' ...
-    num2str(js16) ', ' ])
 % figure
 % b = bar(data);
 % b.FaceColor = 'flat';
 % b.CData(specificColumn,:) = [1 0 0];
 % set(gca, 'xTick', x)
 % return 
-%%
 %% First do the pre-KI then do post-KI
 postKI_Grades = Grades(data.data(:,6)>0,:);
 postKI_Gpas = Gpas(data.data(:,6)>0);
@@ -314,7 +291,6 @@ low_performers = [Grades(low_performers_mask>0         , :) , nonJuniorGpas(low_
 average_performers = [Grades(average_performers_mask>0 , :) , nonJuniorGpas(average_performers_mask>0) , JuniorGpas(average_performers_mask>0) ] ;
 high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high_performers_mask>0)    , JuniorGpas(high_performers_mask>0)    ] ;
 higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , JuniorGpas(higher_performers_mask>0)  ] ;
-
 %% Plot the individual group distributions
 %figure(3); clf; hold on
 subplot(4, 2, [2 4]); hold on
@@ -470,6 +446,30 @@ ylim([ylims])
 grid minor
 title('POST-KI end of junior year')
 
+
+%% JS Divergence calculations
+display('Comparing distributions between sophomore and junior years')
+[nh11, nh21, nbins] = makeSimilarDists(h11n, h11edges, h21n, h21edges, .1);
+[nh12, nh22, nbins] = makeSimilarDists(h12n, h12edges, h22n, h22edges, .1);
+[nh13, nh23, nbins] = makeSimilarDists(h13n, h13edges, h23n, h23edges, .1);
+[nh14, nh24, nbins] = makeSimilarDists(h14n, h14edges, h24n, h24edges, .1);
+[nh15, nh25, nbins] = makeSimilarDists(h15n, h15edges, h25n, h25edges, .1);
+[nh16, nh26, nbins] = makeSimilarDists(h16n, h16edges, h26n, h26edges, .1);
+
+js11 = jsdiv(nh11/sum(nh11), nh21/sum(nh21));
+js12 = jsdiv(nh12/sum(nh12), nh22/sum(nh22));
+js13 = jsdiv(nh13/sum(nh13), nh23/sum(nh23));
+js14 = jsdiv(nh14/sum(nh14), nh24/sum(nh24));
+js15 = jsdiv(nh15/sum(nh15), nh25/sum(nh25));
+js16 = jsdiv(nh16/sum(nh16), nh26/sum(nh26));
+
+display([' Pre KI JS Divs - lowest:' num2str(js11) ...
+    ', lower:' num2str(js12) ...
+    ', low:' num2str(js13) ...
+    ', average:' num2str(js14) ...
+    ', high:' num2str(js15) ...
+    ', higher:' num2str(js16)])
+
 [nh31, nh41, nbins] = makeSimilarDists(h31n, h31edges, h41n, h41edges, .1);
 [nh32, nh42, nbins] = makeSimilarDists(h32n, h32edges, h42n, h42edges, .1);
 [nh33, nh43, nbins] = makeSimilarDists(h33n, h33edges, h43n, h43edges, .1);
@@ -483,33 +483,53 @@ js23 = jsdiv(nh33/sum(nh33), nh43/sum(nh43));
 js24 = jsdiv(nh34/sum(nh34), nh44/sum(nh44));
 js25 = jsdiv(nh35/sum(nh35), nh45/sum(nh45));
 js26 = jsdiv(nh36/sum(nh36), nh46/sum(nh46));
-display(['Post KI JS Divs: ' num2str(js21) ', ' ...
-    num2str(js22) ', ' ...
-    num2str(js23) ', ' ...
-    num2str(js24) ', ' ...
-    num2str(js25) ', ' ...
-    num2str(js26) ', ' ])
-%% Old plotting things
-% h1  = histfit(lower_performers(:   , end-1) , 5);
-% h2  = histfit(low_performers(:     , end-1) , 5);
-% h3  = histfit(average_performers(: , end-1) , 4);
-% h4  = histfit(high_performers(:    , end-1) , 4);
-% h5  = histfit(higher_performers(:  , end-1) , 3);
-% h6  = histfit(lower_performers(:   , end) , 5);
-% h7  = histfit(low_performers(:     , end) , 5);
-% h8  = histfit(average_performers(: , end) , 4);
-% h9  = histfit(high_performers(:    , end) , 4);
-% h10 = histfit(higher_performers(:  , end) , 3);
-% 
-% delete(h1(1)); h1(2).Color = 'k';  h1(2).LineStyle = '--';  h1(2).YData = h1(2).YData/max(h1(2).YData)
-% delete(h2(1)); h2(2).Color = 'r';  h2(2).LineStyle = '--'
-% delete(h3(1)); h3(2).Color = 'c';  h3(2).LineStyle = '--'
-% delete(h4(1)); h4(2).Color = 'g';  h4(2).LineStyle = '--'
-% delete(h5(1)); h5(2).Color = 'm';  h5(2).LineStyle = '--'
-% delete(h6(1)); h6(2).Color = 'k';
-% delete(h7(1)); h7(2).Color = 'r';
-% delete(h8(1)); h8(2).Color = 'c';
-% delete(h9(1)); h9(2).Color = 'g';
-% delete(h10(1)); h10(2).Color = 'm';
-% xlim([1.5 4.5])
-% grid minor
+display(['Post KI JS Divs - lowest:' num2str(js21) ...
+    ', lower:' num2str(js22) ...
+    ', low:' num2str(js23) ...
+    ', average:' num2str(js24) ...
+    ', high:' num2str(js25) ...
+    ', higher:' num2str(js26)])
+
+    
+display(' ')
+display('Comparing distributions between Pre and Post KI')
+[nh51, nh61, nbins] = makeSimilarDists(h11n, h11edges, h31n, h31edges, .1);
+[nh52, nh62, nbins] = makeSimilarDists(h12n, h12edges, h32n, h32edges, .1);
+[nh53, nh63, nbins] = makeSimilarDists(h13n, h13edges, h33n, h33edges, .1);
+[nh54, nh64, nbins] = makeSimilarDists(h14n, h14edges, h34n, h34edges, .1);
+[nh55, nh65, nbins] = makeSimilarDists(h15n, h15edges, h35n, h35edges, .1);
+[nh56, nh66, nbins] = makeSimilarDists(h16n, h16edges, h36n, h36edges, .1);
+
+js31 = jsdiv(nh51/sum(nh51), nh61/sum(nh61));
+js32 = jsdiv(nh52/sum(nh52), nh62/sum(nh62));
+js33 = jsdiv(nh53/sum(nh53), nh63/sum(nh63));
+js34 = jsdiv(nh54/sum(nh54), nh64/sum(nh64));
+js35 = jsdiv(nh55/sum(nh55), nh65/sum(nh65));
+js36 = jsdiv(nh56/sum(nh56), nh66/sum(nh66));
+
+display(['Sophomore JS Divs - lowest:' num2str(js31) ...
+    ', lower:' num2str(js32) ...
+    ', low:' num2str(js33) ...
+    ', average:' num2str(js34) ...
+    ', high:' num2str(js35) ...
+    ', higher:' num2str(js36)])
+
+[nh71, nh81, nbins] = makeSimilarDists(h21n, h21edges, h41n, h41edges, .1);
+[nh72, nh82, nbins] = makeSimilarDists(h22n, h22edges, h42n, h42edges, .1);
+[nh73, nh83, nbins] = makeSimilarDists(h23n, h23edges, h43n, h43edges, .1);
+[nh74, nh84, nbins] = makeSimilarDists(h24n, h24edges, h44n, h44edges, .1);
+[nh75, nh85, nbins] = makeSimilarDists(h25n, h25edges, h45n, h45edges, .1);
+[nh76, nh86, nbins] = makeSimilarDists(h26n, h26edges, h46n, h46edges, .1);
+
+js41 = jsdiv(nh71/sum(nh71), nh81/sum(nh81));
+js42 = jsdiv(nh72/sum(nh72), nh82/sum(nh82));
+js43 = jsdiv(nh73/sum(nh73), nh83/sum(nh83));
+js44 = jsdiv(nh74/sum(nh74), nh84/sum(nh84));
+js45 = jsdiv(nh75/sum(nh75), nh85/sum(nh85));
+js46 = jsdiv(nh76/sum(nh76), nh86/sum(nh86));
+display(['   Junior JS Divs - lowest:' num2str(js41) ...
+    ', lower:' num2str(js42) ...
+    ', low:' num2str(js43) ...
+    ', average:' num2str(js44) ...
+    ', high:' num2str(js45) ...
+    ', higher:' num2str(js46)])

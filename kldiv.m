@@ -6,5 +6,5 @@ function [kdiv] = kldiv(A, B)
     % A, B : array-like
     % Probability distributions of equal length that sum to 1
     
-    kdiv = nansum(A.*log(A./B));
+    kdiv = nansum(A.*log2(A./B));
 end
