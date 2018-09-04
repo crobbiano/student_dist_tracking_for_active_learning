@@ -25,7 +25,8 @@ data = importdata(File, ',');
 
 Classes = data.textdata;
 Classes = Classes(numNonClasses+1:end-numMathClasses);
-ki_status = 6;
+ki_status = find(ismember(data.textdata, 'POSTKI'));%6;
+num_junior_classes = sum(ismember(data.textdata, 'ECE 3'));
 
 %% 
 Grades         = data.data(:,numNonClasses+1:end-numMathClasses);
@@ -35,8 +36,8 @@ gradesGpas     = mean(Grades,2);
 
 %% First do the pre-KI then do post-KI
 % column 6 is pre/post ki indicator. 1==post
-preKI_Grades = Grades(data.data(:,6)<1,:);
-preKI_Gpas = Gpas(data.data(:,6)<1);
+preKI_Grades = Grades(data.data(:,ki_status)<1,:);
+preKI_Gpas = Gpas(data.data(:,ki_status)<1);
 
 % FIXME - don't use nanmean
 JuniorGrades = preKI_Grades(:,end-numMathClasses-6:end-numMathClasses);
@@ -81,7 +82,7 @@ low_performers = [Grades(low_performers_mask>0         , :) , nonJuniorGpas(low_
 average_performers = [Grades(average_performers_mask>0 , :) , nonJuniorGpas(average_performers_mask>0) , JuniorGpas(average_performers_mask>0) ] ;
 high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high_performers_mask>0)    , JuniorGpas(high_performers_mask>0)    ] ;
 higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , JuniorGpas(higher_performers_mask>0)  ] ;
-%% Plot the individual group distributions
+%% Plot the individual group distributions - Fake normal dists
 figure(2); clf; 
 
 subplot(4, 2, [1 3]); hold on
@@ -194,46 +195,136 @@ ylim([0 3.3])
 grid minor
 title('PRE-KI: PDFs of group performances, dashed is prior to 3rd year, solid is 3rd year')
 %% New plotting things
-% generate random data set between 1 and 20
 
 %figure(4); clf; 
 %subplot(2,1,1)
 subplot(4, 2, [5]); hold on
 hold on
-h11 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+% h11 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 [h11n, h11edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
-h12 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+% h12 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
 [h12n, h12edges] = histcounts(lower_performers(:  , end-1) , 'BinWidth' , .1);
-h13 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+% h13 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
 [h13n, h13edges] = histcounts(low_performers(:  , end-1) , 'BinWidth' , .1);
-h14 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+% h14 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
 [h14n, h14edges] = histcounts(average_performers(:  , end-1) , 'BinWidth' , .1);
-h15 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+% h15 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
 [h15n, h15edges] = histcounts(high_performers(:  , end-1) , 'BinWidth' , .1);
-h16 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+% h16 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
 [h16n, h16edges] = histcounts(higher_performers(:  , end-1) , 'BinWidth' , .1);
-xlim([1 4.5])
+
+
+% edgemax = max([h11edges, h12edges, h13edges, h14edges, h15edges, h16edges]);
+% edgemin = min([h11edges, h12edges, h13edges, h14edges, h15edges, h16edges]);
+% edgespacing = mean(diff(h11edges));
+edgemax = 4; edgemin = 0; edgespacing = .1;
+edgesnew = edgemin:edgespacing:edgemax;
+newMat = zeros(6, length(edgesnew));
+tol = .002;
+for idxx = 1:length(h11edges)-1
+    fidx = find(abs(edgesnew - h11edges(idxx))<tol);
+    if fidx
+        newMat(1, fidx) = h11n(idxx);
+    end
+end
+for idxx = 1:length(h12edges)-1
+    fidx = find(abs(edgesnew - h12edges(idxx))<tol);
+    if fidx
+        newMat(2, fidx) = h12n(idxx);
+    end
+end
+for idxx = 1:length(h13edges)-1
+    fidx = find(abs(edgesnew - h13edges(idxx))<tol);
+    if fidx
+        newMat(3, fidx) = h13n(idxx);
+    end
+end
+for idxx = 1:length(h14edges)-1
+    fidx = find(abs(edgesnew - h14edges(idxx))<tol);
+    if fidx
+        newMat(4, fidx) = h14n(idxx);
+    end
+end
+for idxx = 1:length(h15edges)-1
+    fidx = find(abs(edgesnew - h15edges(idxx))<tol);
+    if fidx
+        newMat(5, fidx) = h15n(idxx);
+    end
+end
+for idxx = 1:length(h16edges)-1
+    fidx = find(abs(edgesnew - h16edges(idxx))<tol);
+    if fidx
+        newMat(6, fidx) = h16n(idxx);
+    end
+end
+bar(edgesnew, newMat', 1, 'stacked')
+xlim([.5 4.1])
 ylims = ylim;
+ylims(2) = ylims(2) + 5;
+ylim([ylims])
 %ylim([0 60])
 grid minor
 title('PRE-KI end of sophomore year')
 
+
 %subplot(2,1,2)
 %hold on
 subplot(4, 2, [7]); hold on
-h21 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+% h21 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
 [h21n, h21edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
-h22 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+% h22 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
 [h22n, h22edges] = histcounts(lower_performers(:  , end) , 'BinWidth' , .1);
-h23 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+% h23 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
 [h23n, h23edges] = histcounts(low_performers(:  , end) , 'BinWidth' , .1);
-h24 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+% h24 = histogram(average_performers(: , end) , 'BinWidth' , .1);
 [h24n, h24edges] = histcounts(average_performers(:  , end) , 'BinWidth' , .1);
-h25 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+% h25 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
 [h25n, h25edges] = histcounts(high_performers(:  , end) , 'BinWidth' , .1);
-h26 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+% h26 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
 [h26n, h26edges] = histcounts(higher_performers(:  , end) , 'BinWidth' , .1);
-xlim([1 4.5])
+
+edgemax = 4; edgemin = 0; edgespacing = .1;
+edgesnew = edgemin:edgespacing:edgemax;
+newMat = zeros(6, length(edgesnew));
+tol = .002;
+for idxx = 1:length(h21edges)-1
+    fidx = find(abs(edgesnew - h21edges(idxx))<tol);
+    if fidx
+        newMat(1, fidx) = h21n(idxx);
+    end
+end
+for idxx = 1:length(h22edges)-1
+    fidx = find(abs(edgesnew - h22edges(idxx))<tol);
+    if fidx
+        newMat(2, fidx) = h22n(idxx);
+    end
+end
+for idxx = 1:length(h23edges)-1
+    fidx = find(abs(edgesnew - h23edges(idxx))<tol);
+    if fidx
+        newMat(3, fidx) = h23n(idxx);
+    end
+end
+for idxx = 1:length(h24edges)-1
+    fidx = find(abs(edgesnew - h24edges(idxx))<tol);
+    if fidx
+        newMat(4, fidx) = h24n(idxx);
+    end
+end
+for idxx = 1:length(h25edges)-1
+    fidx = find(abs(edgesnew - h25edges(idxx))<tol);
+    if fidx
+        newMat(5, fidx) = h25n(idxx);
+    end
+end
+for idxx = 1:length(h26edges)-1
+    fidx = find(abs(edgesnew - h26edges(idxx))<tol);
+    if fidx
+        newMat(6, fidx) = h26n(idxx);
+    end
+end
+bar(edgesnew, newMat', 1, 'stacked')
+xlim([.5 4.1])
 ylim([ylims])
 grid minor
 title('PRE-KI end of junior year')
@@ -409,39 +500,126 @@ title('POST-KI: PDFs of group performances, dashed is prior to 3rd year, solid i
 %subplot(2,1,1)
 subplot(4, 2, [6]); hold on
 hold on
-h31 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
+% h31 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 [h31n, h31edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
-h32 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
+% h32 = histogram(lower_performers(:   , end-1) , 'BinWidth' , .1);
 [h32n, h32edges] = histcounts(lower_performers(:  , end-1) , 'BinWidth' , .1);
-h33 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
+% h33 = histogram(low_performers(:     , end-1) , 'BinWidth' , .1);
 [h33n, h33edges] = histcounts(low_performers(:  , end-1) , 'BinWidth' , .1);
-h34 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
+% h34 = histogram(average_performers(: , end-1) , 'BinWidth' , .1);
 [h34n, h34edges] = histcounts(average_performers(:  , end-1) , 'BinWidth' , .1);
-h35 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
+% h35 = histogram(high_performers(:    , end-1) , 'BinWidth' , .1);
 [h35n, h35edges] = histcounts(high_performers(:  , end-1) , 'BinWidth' , .1);
-h36 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
+% h36 = histogram(higher_performers(:  , end-1) , 'BinWidth' , .1);
 [h36n, h36edges] = histcounts(higher_performers(:  , end-1) , 'BinWidth' , .1);
-xlim([1 4.5])
+
+edgemax = 4; edgemin = 0; edgespacing = .1;
+edgesnew = edgemin:edgespacing:edgemax;
+newMat = zeros(6, length(edgesnew));
+tol = .002;
+for idxx = 1:length(h31edges)-1
+    fidx = find(abs(edgesnew - h31edges(idxx))<tol);
+    if fidx
+        newMat(1, fidx) = h31n(idxx);
+    end
+end
+for idxx = 1:length(h32edges)-1
+    fidx = find(abs(edgesnew - h32edges(idxx))<tol);
+    if fidx
+        newMat(2, fidx) = h32n(idxx);
+    end
+end
+for idxx = 1:length(h33edges)-1
+    fidx = find(abs(edgesnew - h33edges(idxx))<tol);
+    if fidx
+        newMat(3, fidx) = h33n(idxx);
+    end
+end
+for idxx = 1:length(h34edges)-1
+    fidx = find(abs(edgesnew - h34edges(idxx))<tol);
+    if fidx
+        newMat(4, fidx) = h34n(idxx);
+    end
+end
+for idxx = 1:length(h35edges)-1
+    fidx = find(abs(edgesnew - h35edges(idxx))<tol);
+    if fidx
+        newMat(5, fidx) = h35n(idxx);
+    end
+end
+for idxx = 1:length(h36edges)-1
+    fidx = find(abs(edgesnew - h36edges(idxx))<tol);
+    if fidx
+        newMat(6, fidx) = h36n(idxx);
+    end
+end
+bar(edgesnew, newMat', 1, 'stacked')
+xlim([.5 4.1])
 ylims = ylim;
+ylims(2) = ylims(2) + 1;
+ylim([ylims])
+%ylim([0 60])
 grid minor
 title('POST-KI end of sophomore year')
 
 %subplot(2,1,2)
 %hold on;
 subplot(4, 2, [8]); hold on
-h41 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
+% h41 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
 [h41n, h41edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
-h42 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
+% h42 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
 [h42n, h42edges] = histcounts(lower_performers(:  , end) , 'BinWidth' , .1);
-h43 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
+% h43 = histogram(low_performers(:     , end) , 'BinWidth' , .1);
 [h43n, h43edges] = histcounts(low_performers(:  , end) , 'BinWidth' , .1);
-h44 = histogram(average_performers(: , end) , 'BinWidth' , .1);
+% h44 = histogram(average_performers(: , end) , 'BinWidth' , .1);
 [h44n, h44edges] = histcounts(average_performers(:  , end) , 'BinWidth' , .1);
-h45 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
+% h45 = histogram(high_performers(:    , end) , 'BinWidth' , .1);
 [h45n, h45edges] = histcounts(high_performers(:  , end) , 'BinWidth' , .1);
-h46 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
+% h46 = histogram(higher_performers(:  , end) , 'BinWidth' , .1);
 [h46n, h46edges] = histcounts(higher_performers(:  , end) , 'BinWidth' , .1);
-xlim([1 4.5])
+
+edgemax = 4; edgemin = 0; edgespacing = .1;
+edgesnew = edgemin:edgespacing:edgemax;
+newMat = zeros(6, length(edgesnew));
+tol = .002;
+for idxx = 1:length(h41edges)-1
+    fidx = find(abs(edgesnew - h41edges(idxx))<tol);
+    if fidx
+        newMat(1, fidx) = h41n(idxx);
+    end
+end
+for idxx = 1:length(h42edges)-1
+    fidx = find(abs(edgesnew - h42edges(idxx))<tol);
+    if fidx
+        newMat(2, fidx) = h42n(idxx);
+    end
+end
+for idxx = 1:length(h43edges)-1
+    fidx = find(abs(edgesnew - h43edges(idxx))<tol);
+    if fidx
+        newMat(3, fidx) = h43n(idxx);
+    end
+end
+for idxx = 1:length(h44edges)-1
+    fidx = find(abs(edgesnew - h44edges(idxx))<tol);
+    if fidx
+        newMat(4, fidx) = h44n(idxx);
+    end
+end
+for idxx = 1:length(h45edges)-1
+    fidx = find(abs(edgesnew - h45edges(idxx))<tol);
+    if fidx
+        newMat(5, fidx) = h45n(idxx);
+    end
+end
+for idxx = 1:length(h46edges)-1
+    fidx = find(abs(edgesnew - h46edges(idxx))<tol);
+    if fidx
+        newMat(6, fidx) = h46n(idxx);
+    end
+end
+bar(edgesnew, newMat', 1, 'stacked')
+xlim([.5 4.1])
 ylim([ylims])
 grid minor
 title('POST-KI end of junior year')
