@@ -201,6 +201,7 @@ end
 %% New plotting things
 
 %figure(4); clf;
+
 %subplot(2,1,1)
 subplot(4, 2, [5]); hold on
 hold on
@@ -262,6 +263,7 @@ for idxx = 1:length(h16edges)-1
     end
 end
 bar(edgesnew, newMat', 1, 'stacked')
+
 % xlim([.5 4.1])
 ylims = ylim;
 ylims(2) = ylims(2) + 5;
@@ -328,6 +330,7 @@ for idxx = 1:length(h26edges)-1
     end
 end
 bar(edgesnew, newMat', 1, 'stacked')
+
 % xlim([.5 4.1])
 ylim([ylims])
 grid minor
@@ -626,8 +629,9 @@ for idxx = 1:length(h46edges)-1
     end
 end
 bar(edgesnew, newMat', 1, 'stacked')
+
 % xlim([.5 4.1])
-ylim([ylims])
+
 grid minor
 title('POST-KI end of junior year')
 
