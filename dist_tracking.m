@@ -14,9 +14,9 @@ clear all
 clc
 addpath('histogram_distance')
 %% Set Up
-load('..\correlational_studies\scripts\rawdata_processing\grades_postKI.mat')
+load('..\correlational_studies\scripts\rawdata_processing\grades_postKI_truncated.mat')
 
-FileName = 'grades_postKI.csv';
+FileName = 'grades_postKI_truncated.csv';
 FilePath = '..\correlational_studies\scripts\rawdata_processing\';
 
 File = [FilePath '\' FileName];
@@ -30,19 +30,24 @@ num_junior_classes = sum(ismember(data.textdata, 'ECE3'));
 
 %%
 Grades         = data.data(:,numNonClasses+1:end);
-Gpas           = data.data(:,numNonClasses);
+Gpas           = data.data(:,numNonClasses-2);
+SophGpas       = data.data(:,numNonClasses-1);
+EceGpas       = data.data(:,numNonClasses-1);
 gradesGpas     = mean(Grades,2);
 [m,n]          = size(Grades);
 
 %% First do the pre-KI then do post-KI
 % column 6 is pre/post ki indicator. 1==post
-all(~isnan(Grades(:,end-6:end)))
+all(~isnan(Grades(:,end-5:end)))
 preKI_Grades = Grades(data.data(:,ki_status)<1,:);
 preKI_Gpas = Gpas(data.data(:,ki_status)<1);
+preKI_SophGpas = SophGpas(data.data(:,ki_status)<1);
+preKI_EceGpas = EceGpas(data.data(:,ki_status)<1);
 
 % FIXME - don't use nanmean
 JuniorGrades = preKI_Grades(:,end-5:end);
 JuniorGpas   = nanmean(JuniorGrades,2);
+JuniorGpas_pre_KI   = JuniorGpas;
 [mj,nj]         = size(JuniorGrades);
 pdj = fitdist(JuniorGpas,'Normal');
 
@@ -51,7 +56,9 @@ nonJuniorGrades = preKI_Grades(:,end-10:end-6);
 nonJuniorGpas   = nanmean(nonJuniorGrades,2);
 nonJuniorGpas_pre_KI   = nonJuniorGpas;
 [m2,n2]         = size(Grades);
-pd = fitdist(nonJuniorGpas,'Normal');
+% pd = fitdist(nonJuniorGpas,'Normal');
+pd.mu = nanmean(nonJuniorGpas);
+pd.std = nanstd(nonJuniorGpas);
 
 lowest_performance_range = pd.mu - (.5*pd.std + 3*pd.std);
 lower_performance_range = pd.mu - (.5*pd.std + 2*pd.std);
@@ -202,8 +209,8 @@ end
 
 %figure(4); clf;
 
-%subplot(2,1,1)
-subplot(4, 2, [5]); hold on
+subplot(2,2,1)
+% subplot(4, 2, [5]); hold on
 hold on
 % h11 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 [h11n, h11edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
@@ -273,9 +280,9 @@ grid minor
 title('PRE-KI end of sophomore year')
 
 
-%subplot(2,1,2)
-%hold on
-subplot(4, 2, [7]); hold on
+subplot(222)
+hold on
+% subplot(4, 2, [7]); hold on
 % h21 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
 [h21n, h21edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
 % h22 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
@@ -345,15 +352,18 @@ title('PRE-KI end of junior year')
 %% First do the pre-KI then do post-KI
 postKI_Grades = Grades(data.data(:,6)>0,:);
 postKI_Gpas = Gpas(data.data(:,6)>0);
+postKI_SophGpas = SophGpas(data.data(:,ki_status)>0);
+postKI_EceGpas = EceGpas(data.data(:,ki_status)>0);
 
 % FIXME - don't use nanmean
-JuniorGrades = postKI_Grades(:,end-6:end);
+JuniorGrades = postKI_Grades(:,end-5:end);
 JuniorGpas   = nanmean(JuniorGrades,2);
+JuniorGpas_post_KI   = JuniorGpas;
 [mj,nj]         = size(JuniorGrades);
 pdj = fitdist(JuniorGpas,'Normal');
 
 % FIXME - don't use nanmean
-nonJuniorGrades = postKI_Grades(:,end-10:end-7);
+nonJuniorGrades = postKI_Grades(:,end-10:end-6);
 nonJuniorGpas   = nanmean(nonJuniorGrades,2);
 nonJuniorGpas_post_KI   = nonJuniorGpas;
 [m2,n2]         = size(Grades);
@@ -384,12 +394,12 @@ higher_performers_mask = (nonJuniorGpas >= higher_performance_range).*(nonJunior
 
 % FIXME - might want to add in anon_id to track these easier, but we should
 % be able to make this work as is
-lowest_performers = [Grades(lowest_performers_mask>0   , :) , nonJuniorGpas(lowest_performers_mask>0)  , JuniorGpas(lowest_performers_mask>0)  ] ;
-lower_performers = [Grades(lower_performers_mask>0     , :) , nonJuniorGpas(lower_performers_mask>0)   , JuniorGpas(lower_performers_mask>0)   ] ;
-low_performers = [Grades(low_performers_mask>0         , :) , nonJuniorGpas(low_performers_mask>0)     , JuniorGpas(low_performers_mask>0)     ] ;
-average_performers = [Grades(average_performers_mask>0 , :) , nonJuniorGpas(average_performers_mask>0) , JuniorGpas(average_performers_mask>0) ] ;
-high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high_performers_mask>0)    , JuniorGpas(high_performers_mask>0)    ] ;
-higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , JuniorGpas(higher_performers_mask>0)  ] ;
+lowest_performers = [Grades(lowest_performers_mask>0   , :) , nonJuniorGpas(lowest_performers_mask>0)  , postKI_EceGpas(lowest_performers_mask>0)  ] ;
+lower_performers = [Grades(lower_performers_mask>0     , :) , nonJuniorGpas(lower_performers_mask>0)   , postKI_EceGpas(lower_performers_mask>0)   ] ;
+low_performers = [Grades(low_performers_mask>0         , :) , nonJuniorGpas(low_performers_mask>0)     , postKI_EceGpas(low_performers_mask>0)     ] ;
+average_performers = [Grades(average_performers_mask>0 , :) , nonJuniorGpas(average_performers_mask>0) , postKI_EceGpas(average_performers_mask>0) ] ;
+high_performers = [Grades(high_performers_mask>0       , :) , nonJuniorGpas(high_performers_mask>0)    , postKI_EceGpas(high_performers_mask>0)    ] ;
+higher_performers = [Grades(higher_performers_mask>0   , :) , nonJuniorGpas(higher_performers_mask>0)  , postKI_EceGpas(higher_performers_mask>0)  ] ;
 %% Plot the individual group distributions
 %figure(3); clf; hold on
 if doFakeFit
@@ -507,8 +517,8 @@ end
 % generate random data set between 1 and 20
 
 %figure(6); clf;
-%subplot(2,1,1)
-subplot(4, 2, [6]); hold on
+subplot(2,2,3)
+% subplot(4, 2, [6]); hold on
 hold on
 % h31 = histogram(lowest_performers(:  , end-1) , 'BinWidth' , .1);
 [h31n, h31edges] = histcounts(lowest_performers(:  , end-1) , 'BinWidth' , .1);
@@ -572,9 +582,9 @@ ylim([ylims])
 grid minor
 title('POST-KI end of sophomore year')
 
-%subplot(2,1,2)
-%hold on;
-subplot(4, 2, [8]); hold on
+subplot(2,2,4)
+hold on;
+% subplot(4, 2, [8]); hold on
 % h41 = histogram(lowest_performers(:  , end) , 'BinWidth' , .1);
 [h41n, h41edges] = histcounts(lowest_performers(:  , end) , 'BinWidth' , .1);
 % h42 = histogram(lower_performers(:   , end) , 'BinWidth' , .1);
@@ -722,3 +732,11 @@ display(['   Junior JS Divs - lowest:' num2str(js41) ...
     ', average:' num2str(js44) ...
     ', high:' num2str(js45) ...
     ', higher:' num2str(js46)])
+
+%% Plot ECDFs
+figure(3); clf
+hold on; 
+cdfplot(postKI_EceGpas)
+cdfplot(JuniorGpas_pre_KI)
+legend('Post KI ECE Junior GPA', 'Pre KI ECE Junior GPA')
+[ksval, kspval] = kstest2(JuniorGpas_pre_KI, postKI_EceGpas)
